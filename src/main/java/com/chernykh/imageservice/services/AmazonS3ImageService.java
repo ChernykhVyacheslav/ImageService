@@ -8,6 +8,7 @@ import com.chernykh.imageservice.repositories.ImageRepository;
 import com.chernykh.imageservice.utils.ImageUtils;
 import com.chernykh.imageservice.exceptions.SourceImageNotFoundException;
 import com.chernykh.imageservice.exceptions.UrlDownException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -18,6 +19,9 @@ public class AmazonS3ImageService extends AmazonClientService implements ImageSe
     // probably will need amazonImageRepository for work with AWS S3 bucket and imageRepository for downloading image from the source
     private final AmazonImageRepository amazonImageRepository;
     private final ImageRepository sourceImageRepository;
+
+    @Value("${source-root-url}")
+    private String sourceUrl;
 
     public AmazonS3ImageService(AmazonImageRepository amazonImageRepository, ImageRepository imageRepository) {
         this.amazonImageRepository = amazonImageRepository;
@@ -38,7 +42,7 @@ public class AmazonS3ImageService extends AmazonClientService implements ImageSe
             if (!checkIfSourceImageExists()) {
                 throw new SourceImageNotFoundException();
             }
-            originalImage = downloadOriginalImage(imageType);
+            originalImage = downloadOriginalImage(reference);
             storeImage(originalImage, originalBucketName, reference);
         }
         Object optimizedImage = optimizeImage(originalImage, imageType);
@@ -68,10 +72,9 @@ public class AmazonS3ImageService extends AmazonClientService implements ImageSe
         return image;
     }
 
-    public Object downloadOriginalImage(ImageType imageType) {
-        ImageUtils.getImageConfigs(imageType);
+    public Object downloadOriginalImage(String reference) {
         Object image = null;
-        //TODO: download original image from the source
+        //TODO: download original image from the source using sourceUrl and reference
         return image;
     }
 
